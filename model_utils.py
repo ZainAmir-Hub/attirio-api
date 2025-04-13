@@ -4,7 +4,6 @@ import os
 import gdown
 import tensorflow as tf
 import numpy as np
-import pandas as pd
 from PIL import Image
 
 MODEL_PATH = "best_model.keras"
@@ -17,21 +16,18 @@ if not os.path.exists(MODEL_PATH):
     print("📥 Downloading model from Google Drive...")
     gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
 
-# === Load category mappings (these are small, fine to load now) ===
-cat_df = pd.read_csv(
-    "list_category_cloth.txt",
-    sep=r"\s{2,}",
-    engine="python",
-    skiprows=1,
-    names=["category_id", "category_name", "category_type"]
-)
+# === Load category mappings (no pandas) ===
+index_to_name = {}
 
-cat_ids = sorted(cat_df["category_id"].unique())
-id_to_index = {cat_id: idx for idx, cat_id in enumerate(cat_ids)}
-index_to_name = {
-    id_to_index[row["category_id"]]: row["category_name"]
-    for _, row in cat_df.iterrows()
-}
+with open("list_category_cloth.txt", "r") as f:
+    lines = f.readlines()[1:]  # Skip header
+
+for idx, line in enumerate(lines):
+    parts = line.strip().split()
+    if len(parts) >= 2:
+        category_name = parts[1]
+        index_to_name[idx] = category_name
+
 
 def load_model():
     global model
