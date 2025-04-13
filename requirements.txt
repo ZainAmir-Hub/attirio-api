@@ -1,6 +1,5 @@
 fastapi
 uvicorn
-tensorflow-cpu
+tensorflow
 pillow
 gdown
-pandas
