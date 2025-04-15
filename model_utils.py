@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 MODEL_PATH = "best_model.keras"
-MODEL_URL = "https://drive.google.com/uc?id=17HfixT0TvMHdQNMFbGA39N5DX_k6xOhi"
+MODEL_URL = "https://drive.google.com/uc?id=1SiHdCXBYyisJ9JFRsiNqzVJspnxMEfVG"
 
 model = None  # Do not load on import
 
