@@ -2,6 +2,7 @@ import os
 import gdown
 import tensorflow as tf
 import numpy as np
+import time
 from PIL import Image
 import logging
 
@@ -54,7 +55,10 @@ def predict(image: Image.Image) -> str:
         processed = preprocess_image(image)
         logger.info(f"🖼️ Preprocessed image: {processed.shape}")
 
+        start_time = time.time()
         preds = model_instance.predict(processed)
+        end_time = time.time()
+        logger.info(f"⏱️ Prediction took {end_time - start_time:.2f} seconds")
         logger.info(f"Prediction raw output: {preds}")
 
         predicted_index = np.argmax(preds, axis=1)[0]
