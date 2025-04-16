@@ -55,6 +55,10 @@ def predict(image: Image.Image) -> str:
         processed = preprocess_image(image)
         logger.info(f"🖼️ Preprocessed image: {processed.shape}")
 
+        # TEMP: Skip prediction to confirm hang
+        logger.info("🧪 Skipping model.predict to confirm it's the issue")
+        return "TestCategory"
+
         start_time = time.time()
         preds = model_instance.predict(processed)
         end_time = time.time()
