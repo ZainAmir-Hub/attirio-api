@@ -1,10 +1,12 @@
-# model_utils.py
-
 import os
 import gdown
 import tensorflow as tf
 import numpy as np
 from PIL import Image
+import logging
+
+# Disable GPU (if you're not using it)
+tf.config.set_visible_devices([], 'GPU')
 
 MODEL_PATH = "best_model.keras"
 MODEL_URL = "https://drive.google.com/uc?id=1SiHdCXBYyisJ9JFRsiNqzVJspnxMEfVG"
@@ -28,11 +30,14 @@ for idx, line in enumerate(lines):
         category_name = parts[1]
         index_to_name[idx] = category_name
 
+# Setup logger
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 def load_model():
     global model
     if model is None:
-        print("🧠 Loading model...")
+        logger.info("🧠 Loading model...")
         model = tf.keras.models.load_model(MODEL_PATH)
     return model
 
@@ -46,6 +51,19 @@ def preprocess_image(image: Image.Image) -> np.ndarray:
 def predict(image: Image.Image) -> str:
     model_instance = load_model()
     processed = preprocess_image(image)
+    
+    # Log the image preprocessing step
+    logger.info(f"🖼️ Preprocessed image: {processed.shape}")
+    
     preds = model_instance.predict(processed)
+    
+    # Log prediction output
+    logger.info(f"Prediction raw output: {preds}")
+    
     predicted_index = np.argmax(preds, axis=1)[0]
-    return index_to_name.get(predicted_index, "Unknown")
+    
+    # Log the final prediction result
+    predicted_category = index_to_name.get(predicted_index, "Unknown")
+    logger.info(f"Predicted category: {predicted_category}")
+    
+    return predicted_category
