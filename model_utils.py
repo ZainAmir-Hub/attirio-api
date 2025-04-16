@@ -49,21 +49,20 @@ def preprocess_image(image: Image.Image) -> np.ndarray:
     return np.expand_dims(image, axis=0)
 
 def predict(image: Image.Image) -> str:
-    model_instance = load_model()
-    processed = preprocess_image(image)
-    
-    # Log the image preprocessing step
-    logger.info(f"🖼️ Preprocessed image: {processed.shape}")
-    
-    preds = model_instance.predict(processed)
-    
-    # Log prediction output
-    logger.info(f"Prediction raw output: {preds}")
-    
-    predicted_index = np.argmax(preds, axis=1)[0]
-    
-    # Log the final prediction result
-    predicted_category = index_to_name.get(predicted_index, "Unknown")
-    logger.info(f"Predicted category: {predicted_category}")
-    
-    return predicted_category
+    try:
+        model_instance = load_model()
+        processed = preprocess_image(image)
+        logger.info(f"🖼️ Preprocessed image: {processed.shape}")
+
+        preds = model_instance.predict(processed)
+        logger.info(f"Prediction raw output: {preds}")
+
+        predicted_index = np.argmax(preds, axis=1)[0]
+        predicted_category = index_to_name.get(predicted_index, "Unknown")
+        logger.info(f"Predicted category: {predicted_category}")
+        return predicted_category
+
+    except Exception as e:
+        logger.error(f"❌ Prediction failed: {str(e)}")
+        return "Error: Prediction failed"
+
